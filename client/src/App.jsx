@@ -1,15 +1,19 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+
+import Canvas from './Canvas';
+import Customizer from './pages/Customizer';
+import Home from './pages/Home';
 
 function App() {
-  const [count, setCount] = useState(0)
 
-  return (
-  <h1 className="text-8xl font-bold underline">
-    Hello world!
-  </h1>
+  	return (
+		<main className='app transition-all ease-in'>
+			<Home />
+			<Canvas />
+			<Customizer /> 
+		</main>
   )
 }
 
-export default App
+export default App;
+  

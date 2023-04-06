@@ -59,39 +59,56 @@ const Customizer = () => {
 	}
 
 	const handleSubmit = async (type) => {
-		if(!prompt) alert ('Please Enter a Prompt')
-
+		if(!prompt) return alert("Please enter a prompt");
+	
 		try {
-			//call backend to make ai image
-			
+			setGeneratingImg(true);
+		
+			const response = await fetch('http://localhost:8080/api/v1/dalle', {
+				method: 'POST',
+				headers: {
+				'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+				prompt,
+				})
+			})
+
+		  	const data = await response.json();
+		  	handleDecals(type, `data:image/png;base64,${data.photo}`)
+
 		} catch (error) {
-			alert(error)
+		  	alert(error)
 		} finally {
-			setGeneratingImg(false)
-			setActiveEditorTab(false)
+			setGeneratingImg(false);
+			setActiveEditorTab("");
 		}
-	}
+	  }
+	  
 	const handleActiveFilterTab = (tabName) => {
 		switch (tabName) {
 			case "logoShirt":
-					state.isLogoTexture = !activeFilterTab[tabName]
-				break;
-			case "stylishShirt":
-				state.isLogoTexture = !activeFilterTab[tabName]
+			  	state.isLogoTexture = !activeFilterTab[tabName];
 			break;
-			default:
+		  	case "stylishShirt":
+			  	state.isFullTexture = !activeFilterTab[tabName];
+			break;
+		  	default:
 				state.isLogoTexture = true;
 				state.isFullTexture = false;
+			break;
 		}
-
-		//after setting the state we have to update the active
+	
+		// after setting the state, activeFilterTab is updated
+	
 		setActiveFilterTab((prevState) => {
-			return {
+		  	return {
 				...prevState,
 				[tabName]: !prevState[tabName]
-			}
+		  	}	
 		})
 	}
+
 	const handleDecals = (type, result) => {
 		const decalType = DecalTypes[type];
 
@@ -155,6 +172,18 @@ const Customizer = () => {
 								handleClick={() => handleActiveFilterTab(tab.name)}
 							/> 
 						))}
+
+						<div
+							onClick={() => downloadCanvasToImage(config.canvasId)}
+							className={`tab-btn rounded-full glassmorphism`}
+	  					>
+							<img 
+								src={download}
+								alt="download"
+								className={`w-2/3 h-2/3 object-contain`}
+
+							/>
+						</div>
 					</motion.div> 
 				</>
 			)} 
